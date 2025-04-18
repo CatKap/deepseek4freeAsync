@@ -1,4 +1,7 @@
-# DeepSeek4Free
+# Async DeepSeek4Free
+
+
+This repo provides async fucntionality for deepSeek4Free repo. For me it's changed time of evaluation rapidly - from 60 to 9 seconds.
 
 A Python package for interacting with the DeepSeek AI chat API. This package provides a clean interface to interact with DeepSeek's chat model, with support for streaming responses, thinking process visibility, and web search capabilities.
 
@@ -97,18 +100,20 @@ The captured cookie will be stored in `dsk/cookies.json` and automatically used 
 
 ```python
 from dsk.api import DeepSeekAPI
+import asyncio
 
 # Initialize with your auth token
 api = DeepSeekAPI("YOUR_AUTH_TOKEN")
 
 # Create a new chat session
 chat_id = api.create_chat_session()
-
-# Simple chat completion
-prompt = "What is Python?"
-for chunk in api.chat_completion(chat_id, prompt):
-    if chunk['type'] == 'text':
-        print(chunk['content'], end='', flush=True)
+async def chat():
+    # Simple chat completion
+    prompt = "What is Python?"
+    async for chunk in api.chat_completion(chat_id, prompt):
+        if chunk['type'] == 'text':
+            print(chunk['content'], end='', flush=True)
+asyncio.run(chat)
 ```
 
 ### Advanced Features
@@ -119,7 +124,7 @@ The thinking process shows the model's reasoning steps:
 
 ```python
 # With thinking process enabled
-for chunk in api.chat_completion(
+async for chunk in api.chat_completion(
     chat_id,
     "Explain quantum computing",
     thinking_enabled=True
@@ -158,7 +163,7 @@ chat_id = api.create_chat_session()
 
 # Send initial message
 parent_id = None
-for chunk in api.chat_completion(chat_id, "Tell me about neural networks"):
+async for chunk in api.chat_completion(chat_id, "Tell me about neural networks"):
     if chunk['type'] == 'text':
         print(chunk['content'], end='', flush=True)
     elif 'message_id' in chunk:
@@ -192,7 +197,7 @@ try:
     api = DeepSeekAPI("YOUR_AUTH_TOKEN")
     chat_id = api.create_chat_session()
     
-    for chunk in api.chat_completion(chat_id, "Your prompt here"):
+    async for chunk in api.chat_completion(chat_id, "Your prompt here"):
         if chunk['type'] == 'text':
             print(chunk['content'], end='', flush=True)
             
